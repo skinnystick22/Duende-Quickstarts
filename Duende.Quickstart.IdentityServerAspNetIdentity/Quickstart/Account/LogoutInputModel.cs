@@ -2,10 +2,9 @@
 // See LICENSE in the project root for license information.
 
 
-namespace Duende.Quickstart.IdentityServerAspNetIdentity.Quickstart.Account
+namespace Duende.Quickstart.IdentityServerAspNetIdentity.Quickstart.Account;
+
+public class LogoutInputModel
 {
-    public class LogoutInputModel
-    {
-        public string LogoutId { get; set; }
-    }
+    public string LogoutId { get; set; }
 }

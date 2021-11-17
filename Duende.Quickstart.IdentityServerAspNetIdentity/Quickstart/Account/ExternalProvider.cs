@@ -2,11 +2,10 @@
 // See LICENSE in the project root for license information.
 
 
-namespace Duende.Quickstart.IdentityServerAspNetIdentity.Quickstart.Account
+namespace Duende.Quickstart.IdentityServerAspNetIdentity.Quickstart.Account;
+
+public class ExternalProvider
 {
-    public class ExternalProvider
-    {
-        public string DisplayName { get; set; }
-        public string AuthenticationScheme { get; set; }
-    }
+    public string DisplayName { get; set; }
+    public string AuthenticationScheme { get; set; }
 }

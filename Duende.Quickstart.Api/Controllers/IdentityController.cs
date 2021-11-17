@@ -1,18 +1,16 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Duende.Quickstart.Api.Controllers
+namespace Duende.Quickstart.Api.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+[Authorize]
+public class IdentityController : ControllerBase
 {
-    [ApiController]
-    [Route("identity")]
-    [Authorize]
-    public class IdentityController : ControllerBase
+    [HttpGet]
+    public IActionResult Get()
     {
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return new JsonResult(from c in User.Claims select new {c.Type, c.Value});
-        }
+        return new JsonResult(User.Claims.Select(c => new {c.Type, c.Value}));
     }
 }

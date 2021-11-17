@@ -4,10 +4,9 @@
 
 using Duende.Quickstart.IdentityServerAspNetIdentity.Quickstart.Consent;
 
-namespace Duende.Quickstart.IdentityServerAspNetIdentity.Quickstart.Device
+namespace Duende.Quickstart.IdentityServerAspNetIdentity.Quickstart.Device;
+
+public class DeviceAuthorizationInputModel : ConsentInputModel
 {
-    public class DeviceAuthorizationInputModel : ConsentInputModel
-    {
-        public string UserCode { get; set; }
-    }
+    public string UserCode { get; set; }
 }

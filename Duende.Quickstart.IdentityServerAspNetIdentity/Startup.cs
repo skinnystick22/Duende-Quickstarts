@@ -5,80 +5,74 @@
 using Duende.IdentityServer;
 using Duende.Quickstart.IdentityServerAspNetIdentity.Data;
 using Duende.Quickstart.IdentityServerAspNetIdentity.Models;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
-namespace Duende.Quickstart.IdentityServerAspNetIdentity
+namespace Duende.Quickstart.IdentityServerAspNetIdentity;
+
+public class Startup
 {
-    public class Startup
+    public IWebHostEnvironment Environment { get; }
+    public IConfiguration Configuration { get; }
+
+    public Startup(IWebHostEnvironment environment, IConfiguration configuration)
     {
-        public IWebHostEnvironment Environment { get; }
-        public IConfiguration Configuration { get; }
+        Environment = environment;
+        Configuration = configuration;
+    }
 
-        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
-        {
-            Environment = environment;
-            Configuration = configuration;
-        }
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllersWithViews();
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllersWithViews();
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                o => o.MigrationsAssembly(typeof(Startup).Assembly.FullName)));
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                    o => o.MigrationsAssembly(typeof(Startup).Assembly.FullName)));
+        services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-
-            var builder = services.AddIdentityServer(options =>
-                {
-                    options.Events.RaiseErrorEvents = true;
-                    options.Events.RaiseInformationEvents = true;
-                    options.Events.RaiseFailureEvents = true;
-                    options.Events.RaiseSuccessEvents = true;
-
-                    // see https://docs.duendesoftware.com/identityserver/v5/fundamentals/resources/
-                    options.EmitStaticAudienceClaim = true;
-                })
-                .AddInMemoryIdentityResources(Config.IdentityResources)
-                .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryClients(Config.Clients)
-                .AddAspNetIdentity<ApplicationUser>();
-
-            services.AddAuthentication()
-                .AddGoogle(options =>
-                {
-                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-
-                    // register your IdentityServer with Google at https://console.developers.google.com
-                    // enable the Google+ API
-                    // set the redirect URI to https://localhost:5001/signin-google
-                    options.ClientId = "copy client ID from Google here";
-                    options.ClientSecret = "copy client secret from Google here";
-                });
-        }
-
-        public void Configure(IApplicationBuilder app)
-        {
-            if (Environment.IsDevelopment())
+        var builder = services.AddIdentityServer(options =>
             {
-                app.UseDeveloperExceptionPage();
-            }
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
 
-            app.UseStaticFiles();
+                // see https://docs.duendesoftware.com/identityserver/v5/fundamentals/resources/
+                options.EmitStaticAudienceClaim = true;
+            })
+            .AddInMemoryIdentityResources(Config.IdentityResources)
+            .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryClients(Config.Clients)
+            .AddAspNetIdentity<ApplicationUser>();
 
-            app.UseRouting();
-            app.UseIdentityServer();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
+        services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+                // register your IdentityServer with Google at https://console.developers.google.com
+                // enable the Google+ API
+                // set the redirect URI to https://localhost:5001/signin-google
+                options.ClientId = "copy client ID from Google here";
+                options.ClientSecret = "copy client secret from Google here";
+            });
+    }
+
+    public void Configure(IApplicationBuilder app)
+    {
+        if (Environment.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
         }
+
+        app.UseStaticFiles();
+
+        app.UseRouting();
+        app.UseIdentityServer();
+        app.UseAuthorization();
+        app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
     }
 }
