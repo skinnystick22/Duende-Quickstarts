@@ -5,7 +5,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Duende.Quickstart.Client;
 
-public class Program
+public static class Program
 {
     public static async Task<int> Main(string[] args)
     {

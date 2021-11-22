@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Mvc;
 using Duende.Quickstart.MvcClient.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json.Linq;
 

@@ -2,6 +2,7 @@
 // See LICENSE in the project root for license information.
 
 
+using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
@@ -13,14 +14,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace Duende.Quickstart.IdentityServerAspNetIdentity.Quickstart.Consent;
 
 /// <summary>
-/// This controller processes the consent UI
+///     This controller processes the consent UI
 /// </summary>
 [SecurityHeaders]
 [Authorize]
 public class ConsentController : Controller
 {
-    private readonly IIdentityServerInteractionService _interaction;
     private readonly IEventService _events;
+    private readonly IIdentityServerInteractionService _interaction;
     private readonly ILogger<ConsentController> _logger;
 
     public ConsentController(
@@ -34,7 +35,7 @@ public class ConsentController : Controller
     }
 
     /// <summary>
-    /// Shows the consent screen
+    ///     Shows the consent screen
     /// </summary>
     /// <param name="returnUrl"></param>
     /// <returns></returns>
@@ -42,16 +43,13 @@ public class ConsentController : Controller
     public async Task<IActionResult> Index(string returnUrl)
     {
         var vm = await BuildViewModelAsync(returnUrl);
-        if (vm != null)
-        {
-            return View("Index", vm);
-        }
+        if (vm != null) return View("Index", vm);
 
         return View("Error");
     }
 
     /// <summary>
-    /// Handles the consent screen postback
+    ///     Handles the consent screen postback
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -63,24 +61,16 @@ public class ConsentController : Controller
         {
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
             if (context?.IsNativeClient() == true)
-            {
                 // The client is native, so this change in how to
                 // return the response is for better UX for the end user.
                 return this.LoadingPage("Redirect", result.RedirectUri);
-            }
 
             return Redirect(result.RedirectUri);
         }
 
-        if (result.HasValidationError)
-        {
-            ModelState.AddModelError(string.Empty, result.ValidationError);
-        }
+        if (result.HasValidationError) ModelState.AddModelError(string.Empty, result.ValidationError);
 
-        if (result.ShowView)
-        {
-            return View("Index", result.ViewModel);
-        }
+        if (result.ShowView) return View("Index", result.ViewModel);
 
         return View("Error");
     }
@@ -115,10 +105,8 @@ public class ConsentController : Controller
             {
                 var scopes = model.ScopesConsented;
                 if (ConsentOptions.EnableOfflineAccess == false)
-                {
                     scopes = scopes.Where(x =>
-                        x != Duende.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess);
-                }
+                        x != IdentityServerConstants.StandardScopes.OfflineAccess);
 
                 grantedConsent = new ConsentResponse
                 {
@@ -164,13 +152,8 @@ public class ConsentController : Controller
     {
         var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
         if (request != null)
-        {
             return CreateConsentViewModel(model, returnUrl, request);
-        }
-        else
-        {
-            _logger.LogError("No consent request matching request: {0}", returnUrl);
-        }
+        _logger.LogError("No consent request matching request: {0}", returnUrl);
 
         return null;
     }
@@ -209,11 +192,9 @@ public class ConsentController : Controller
         }
 
         if (ConsentOptions.EnableOfflineAccess && request.ValidatedResources.Resources.OfflineAccess)
-        {
             apiScopes.Add(GetOfflineAccessScope(
-                vm.ScopesConsented.Contains(Duende.IdentityServer.IdentityServerConstants.StandardScopes
+                vm.ScopesConsented.Contains(IdentityServerConstants.StandardScopes
                     .OfflineAccess) || model == null));
-        }
 
         vm.ApiScopes = apiScopes;
 
@@ -236,10 +217,8 @@ public class ConsentController : Controller
     public ScopeViewModel CreateScopeViewModel(ParsedScopeValue parsedScopeValue, ApiScope apiScope, bool check)
     {
         var displayName = apiScope.DisplayName ?? apiScope.Name;
-        if (!String.IsNullOrWhiteSpace(parsedScopeValue.ParsedParameter))
-        {
+        if (!string.IsNullOrWhiteSpace(parsedScopeValue.ParsedParameter))
             displayName += ":" + parsedScopeValue.ParsedParameter;
-        }
 
         return new ScopeViewModel
         {
@@ -256,7 +235,7 @@ public class ConsentController : Controller
     {
         return new ScopeViewModel
         {
-            Value = Duende.IdentityServer.IdentityServerConstants.StandardScopes.OfflineAccess,
+            Value = IdentityServerConstants.StandardScopes.OfflineAccess,
             DisplayName = ConsentOptions.OfflineAccessDisplayName,
             Description = ConsentOptions.OfflineAccessDescription,
             Emphasize = true,

@@ -35,10 +35,7 @@ public static class Program
         try
         {
             var seed = args.Contains("/seed");
-            if (seed)
-            {
-                args = args.Except(new[] {"/seed"}).ToArray();
-            }
+            if (seed) args = args.Except(new[] {"/seed"}).ToArray();
 
             var host = CreateHostBuilder(args).Build();
 
@@ -67,8 +64,10 @@ public static class Program
         }
     }
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
             .UseSerilog()
             .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+    }
 }

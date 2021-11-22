@@ -12,8 +12,8 @@ namespace Duende.Quickstart.IdentityServerAspNetIdentity.Quickstart.Home;
 [AllowAnonymous]
 public class HomeController : Controller
 {
-    private readonly IIdentityServerInteractionService _interaction;
     private readonly IWebHostEnvironment _environment;
+    private readonly IIdentityServerInteractionService _interaction;
     private readonly ILogger _logger;
 
     public HomeController(IIdentityServerInteractionService interaction, IWebHostEnvironment environment,
@@ -27,17 +27,15 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         if (_environment.IsDevelopment())
-        {
             // only show in development
             return View();
-        }
 
         _logger.LogInformation("Homepage is disabled in production. Returning 404.");
         return NotFound();
     }
 
     /// <summary>
-    /// Shows the error page
+    ///     Shows the error page
     /// </summary>
     public async Task<IActionResult> Error(string errorId)
     {
@@ -50,10 +48,8 @@ public class HomeController : Controller
             vm.Error = message;
 
             if (!_environment.IsDevelopment())
-            {
                 // only show in development
                 message.ErrorDescription = null;
-            }
         }
 
         return View("Error", vm);

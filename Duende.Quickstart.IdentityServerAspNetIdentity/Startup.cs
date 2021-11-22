@@ -12,14 +12,14 @@ namespace Duende.Quickstart.IdentityServerAspNetIdentity;
 
 public class Startup
 {
-    public IWebHostEnvironment Environment { get; }
-    public IConfiguration Configuration { get; }
-
     public Startup(IWebHostEnvironment environment, IConfiguration configuration)
     {
         Environment = environment;
         Configuration = configuration;
     }
+
+    public IWebHostEnvironment Environment { get; }
+    public IConfiguration Configuration { get; }
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -63,10 +63,7 @@ public class Startup
 
     public void Configure(IApplicationBuilder app)
     {
-        if (Environment.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
+        if (Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
 
         app.UseStaticFiles();
 
